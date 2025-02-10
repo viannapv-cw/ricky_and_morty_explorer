@@ -32,7 +32,6 @@ class EpisodeDetailsBloc extends Bloc<EpisodeDetailsEvent, EpisodeDetailsState> 
       emit(EpisodeDetailsLoading());
       final episode = await getEpisodeDetails(event.episodeId);
       emit(EpisodeDetailsLoaded(episode));
-      
       add(LoadEpisodeCharacters(episode.characters));
     } catch (e) {
       emit(EpisodeDetailsError(e.toString()));
@@ -61,10 +60,18 @@ class EpisodeDetailsBloc extends Bloc<EpisodeDetailsEvent, EpisodeDetailsState> 
     try {
       if (state is EpisodeDetailsLoaded) {
         final currentState = state as EpisodeDetailsLoaded;
+        
+        // Atualiza o favorito
         await toggleFavorite(event.episode);
+        
+        // Obtém o episódio atualizado
         final updatedEpisode = await getEpisodeDetails(event.episode.id);
-        // Mantém a lista de personagens ao atualizar o estado
-        emit(EpisodeDetailsLoaded(updatedEpisode, characters: currentState.characters));
+        
+        // Emite o novo estado mantendo a lista de personagens existente
+        emit(EpisodeDetailsLoaded(
+          updatedEpisode,
+          characters: currentState.characters,
+        ));
       }
     } catch (e) {
       emit(EpisodeDetailsError(e.toString()));

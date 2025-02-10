@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rick_and_morty_explorer/core/theme/theme_provider.dart';
 import '../blocs/episodes/episodes_bloc.dart';
 import '../blocs/favorites/favorites_bloc.dart';
 import '../widgets/episode_card.dart';
@@ -13,6 +14,16 @@ class EpisodesPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Rick and Morty Episodes'),
         actions: [
+          IconButton(
+            icon: Icon(
+              context.watch<ThemeProvider>().isDarkMode 
+                ? Icons.light_mode 
+                : Icons.dark_mode,
+            ),
+            onPressed: () {
+              context.read<ThemeProvider>().toggleTheme();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.favorite),
             onPressed: () async {

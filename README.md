@@ -93,7 +93,7 @@ Develop a Flutter application that allows users to explore the Rick and Morty un
 
 ## Resources
 ### Rick and Morty API
-- Base URL: [https://rickandmortyapi.com/api](https://rickandmortyapi.com/api)
+- Base URL: [https://rickandmortyapi.com/api]
 - Episodes endpoint: `/episode`
 - Characters endpoint: `/character`
 
