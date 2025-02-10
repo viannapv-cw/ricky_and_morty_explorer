@@ -23,9 +23,14 @@ class EpisodeDetailsError extends EpisodeDetailsState {
 class EpisodeDetailsLoaded extends EpisodeDetailsState {
   final Episode episode;
   final List<Character>? characters;
+  final bool isCharactersLoaded;
 
-  const EpisodeDetailsLoaded(this.episode, {this.characters});
+  const EpisodeDetailsLoaded(
+    this.episode, {
+    this.characters,
+    this.isCharactersLoaded = false,
+  });
 
   @override
-  List<Object> get props => [episode, characters ?? []];
+  List<Object> get props => [episode, characters ?? [], isCharactersLoaded];
 } 

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:rick_and_morty_explorer/domain/entities/character.dart';
 import '../../../domain/entities/episode.dart';
-import '../../../domain/entities/character.dart';
 import '../../../domain/usecases/get_episode_details_usecase.dart';
 import '../../../domain/usecases/get_characters_by_urls_usecase.dart';
 import '../../../domain/usecases/toggle_favorite_usecase.dart';
@@ -31,7 +31,7 @@ class EpisodeDetailsBloc extends Bloc<EpisodeDetailsEvent, EpisodeDetailsState> 
     try {
       emit(EpisodeDetailsLoading());
       final episode = await getEpisodeDetails(event.episodeId);
-      emit(EpisodeDetailsLoaded(episode));
+      emit(EpisodeDetailsLoaded(episode, characters: null, isCharactersLoaded: false));
       add(LoadEpisodeCharacters(episode.characters));
     } catch (e) {
       emit(EpisodeDetailsError(e.toString()));
@@ -46,7 +46,11 @@ class EpisodeDetailsBloc extends Bloc<EpisodeDetailsEvent, EpisodeDetailsState> 
       if (state is EpisodeDetailsLoaded) {
         final currentState = state as EpisodeDetailsLoaded;
         final characters = await getCharactersByUrls(event.characterUrls);
-        emit(EpisodeDetailsLoaded(currentState.episode, characters: characters));
+        emit(EpisodeDetailsLoaded(
+          currentState.episode, 
+          characters: characters,
+          isCharactersLoaded: true
+        ));
       }
     } catch (e) {
       emit(EpisodeDetailsError(e.toString()));
@@ -60,17 +64,12 @@ class EpisodeDetailsBloc extends Bloc<EpisodeDetailsEvent, EpisodeDetailsState> 
     try {
       if (state is EpisodeDetailsLoaded) {
         final currentState = state as EpisodeDetailsLoaded;
-        
-        // Atualiza o favorito
         await toggleFavorite(event.episode);
-        
-        // Obtém o episódio atualizado
         final updatedEpisode = await getEpisodeDetails(event.episode.id);
-        
-        // Emite o novo estado mantendo a lista de personagens existente
         emit(EpisodeDetailsLoaded(
           updatedEpisode,
           characters: currentState.characters,
+          isCharactersLoaded: currentState.isCharactersLoaded
         ));
       }
     } catch (e) {

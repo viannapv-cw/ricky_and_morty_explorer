@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rick_and_morty_explorer/core/theme/app_colors.dart';
 import '../blocs/episode_details/episode_details_bloc.dart';
 import '../blocs/episodes/episodes_bloc.dart';
 import '../blocs/favorites/favorites_bloc.dart';
@@ -76,17 +77,23 @@ class EpisodeDetailsPage extends StatelessWidget {
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
-              IconButton(
-                icon: Icon(
-                  episode.isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: episode.isFavorite ? Colors.red : null,
-                ),
-                onPressed: () {
-                  context.read<EpisodeDetailsBloc>().add(
-                    ToggleFavoriteInDetails(episode),
+              BlocBuilder<EpisodeDetailsBloc, EpisodeDetailsState>(
+                builder: (context, state) {
+                  return IconButton(
+                    icon: Icon(
+                      episode.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: episode.isFavorite ? AppColors.favorite : null,
+                    ),
+                    onPressed: (state is EpisodeDetailsLoaded && state.isCharactersLoaded)
+                      ? () {
+                          context.read<EpisodeDetailsBloc>().add(
+                            ToggleFavoriteInDetails(episode),
+                          );
+                          context.read<FavoritesBloc>().add(LoadFavorites());
+                          context.read<EpisodesBloc>().add(const LoadEpisodes());
+                        }
+                      : null,
                   );
-                  context.read<FavoritesBloc>().add(LoadFavorites());
-                  context.read<EpisodesBloc>().add(const LoadEpisodes());
                 },
               ),
             ],
