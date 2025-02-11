@@ -5,8 +5,20 @@ import '../blocs/episodes/episodes_bloc.dart';
 import '../widgets/episode_card.dart';
 import '../../core/di/injection_container.dart';
 
-class FavoritesPage extends StatelessWidget {
+class FavoritesPage extends StatefulWidget {
   const FavoritesPage({Key? key}) : super(key: key);
+
+  @override
+  State<FavoritesPage> createState() => _FavoritesPageState();
+}
+
+class _FavoritesPageState extends State<FavoritesPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Carrega os favoritos quando a página é criada
+    context.read<FavoritesBloc>().add(const LoadFavorites());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,62 +40,31 @@ class FavoritesPage extends StatelessWidget {
       ),
       body: BlocBuilder<FavoritesBloc, FavoritesState>(
         builder: (context, state) {
-          if (state is FavoritesLoading) {
+          if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
-          if (state is FavoritesError) {
+
+          if (state.error != null) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.message),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<FavoritesBloc>().add(LoadFavorites());
-                    },
-                    child: const Text('Try Again'),
-                  ),
-                ],
-              ),
+              child: Text('Error: ${state.error}'),
             );
           }
-          
-          if (state is FavoritesEmpty) {
+
+          if (state.favorites.isEmpty) {
             return const Center(
               child: Text('No favorite episodes yet'),
             );
           }
-          
-          if (state is FavoritesLoaded) {
-            return ListView.builder(
-              itemCount: state.episodes.length,
-              itemBuilder: (context, index) {
-                final episode = state.episodes[index];
-                return GestureDetector(
-                  onTap: () async {
-                    // Aguarda o retorno da navegação
-                    final result = await Navigator.pushNamed(
-                      context,
-                      '/episode-details',
-                      arguments: episode.id,
-                    );
-                    
-                    // Se houve alteração, atualiza a lista
-                    if (result == true && context.mounted) {
-                      context.read<FavoritesBloc>().add(LoadFavorites());
-                    }
-                  },
-                  child: EpisodeCard(
-                    episode: episode,
-                    isInFavoritesPage: true,
-                  ),
-                );
-              },
-            );
-          }
-          
-          return const SizedBox();
+
+          return ListView.builder(
+            itemCount: state.favorites.length,
+            itemBuilder: (context, index) {
+              return EpisodeCard(
+                episode: state.favorites[index],
+                isInFavoritesPage: true,
+              );
+            },
+          );
         },
       ),
     );

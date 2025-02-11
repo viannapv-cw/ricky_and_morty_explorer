@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rick_and_morty_explorer/core/theme/app_colors.dart';
+import 'package:rick_and_morty_explorer/presentation/blocs/episodes/episodes_bloc.dart';
+import 'package:rick_and_morty_explorer/presentation/blocs/favorites/favorites_bloc.dart';
 import '../../domain/entities/episode.dart';
-import '../blocs/episodes/episodes_bloc.dart';
-import '../blocs/favorites/favorites_bloc.dart';
+import '../pages/episode_details_page.dart';
 
 class EpisodeCard extends StatelessWidget {
   final Episode episode;
@@ -11,7 +13,7 @@ class EpisodeCard extends StatelessWidget {
   const EpisodeCard({
     Key? key,
     required this.episode,
-    this.isInFavoritesPage = false,
+    required this.isInFavoritesPage,
   }) : super(key: key);
 
   @override
@@ -20,35 +22,26 @@ class EpisodeCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         title: Text(episode.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(episode.episode),
-            Text('Air Date: ${episode.airDate}'),
-          ],
-        ),
+        subtitle: Text('${episode.episode} - ${episode.airDate}'),
         trailing: IconButton(
           icon: Icon(
             episode.isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: episode.isFavorite ? Colors.red : null,
+            color: episode.isFavorite ? AppColors.favorite : null,
           ),
           onPressed: () {
             if (isInFavoritesPage) {
-              context.read<FavoritesBloc>().add(
-                ToggleFavoriteInList(episode),
-              );
+              context.read<FavoritesBloc>().add(ToggleFavoriteInList(episode));
             } else {
-              context.read<EpisodesBloc>().add(
-                ToggleFavoriteInEpisodes(episode),
-              );
+              context.read<EpisodesBloc>().add(ToggleFavorite(episode));
             }
           },
         ),
         onTap: () {
-          Navigator.pushNamed(
+          Navigator.push(
             context,
-            '/episode-details',
-            arguments: episode.id,
+            MaterialPageRoute(
+              builder: (context) => EpisodeDetailsPage(episodeId: episode.id),
+            ),
           );
         },
       ),

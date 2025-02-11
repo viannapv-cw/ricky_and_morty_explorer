@@ -8,43 +8,49 @@ part 'favorites_event.dart';
 part 'favorites_state.dart';
 
 class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
-  final GetFavoriteEpisodesUseCase getFavoriteEpisodes;
+  final GetFavoriteEpisodesUseCase getFavorites;
   final ToggleFavoriteUseCase toggleFavorite;
 
   FavoritesBloc({
-    required this.getFavoriteEpisodes,
+    required this.getFavorites,
     required this.toggleFavorite,
-  }) : super(FavoritesInitial()) {
+  }) : super(const FavoritesState()) {
     on<LoadFavorites>(_onLoadFavorites);
     on<ToggleFavoriteInList>(_onToggleFavorite);
   }
 
-  Future<void> _onLoadFavorites(
-    LoadFavorites event,
-    Emitter<FavoritesState> emit,
-  ) async {
+  Future<void> _onLoadFavorites(LoadFavorites event, Emitter<FavoritesState> emit) async {
     try {
-      emit(FavoritesLoading());
-      final episodes = await getFavoriteEpisodes();
-      if (episodes.isEmpty) {
-        emit(FavoritesEmpty());
-      } else {
-        emit(FavoritesLoaded(episodes));
-      }
+      emit(state.copyWith(isLoading: true));
+      final favorites = await getFavorites();
+      print('Loaded favorites: ${favorites.length}'); // Debug log
+      emit(state.copyWith(
+        favorites: favorites,
+        isLoading: false,
+        error: null,
+      ));
     } catch (e) {
-      emit(FavoritesError(e.toString()));
+      print('Error loading favorites: $e'); // Debug log
+      emit(state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
     }
   }
 
-  Future<void> _onToggleFavorite(
-    ToggleFavoriteInList event,
-    Emitter<FavoritesState> emit,
-  ) async {
+  Future<void> _onToggleFavorite(ToggleFavoriteInList event, Emitter<FavoritesState> emit) async {
     try {
       await toggleFavorite(event.episode);
-      add(LoadFavorites());
+      
+      // Recarrega os favoritos após toggle
+      final updatedFavorites = await getFavorites();
+      
+      emit(state.copyWith(
+        favorites: updatedFavorites,
+      ));
     } catch (e) {
-      emit(FavoritesError(e.toString()));
+      print('Error toggling favorite: $e'); // Debug log
+      emit(state.copyWith(error: e.toString()));
     }
   }
 } 

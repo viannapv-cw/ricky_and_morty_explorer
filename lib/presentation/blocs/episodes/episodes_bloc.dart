@@ -10,70 +10,62 @@ part 'episodes_state.dart';
 class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
   final GetEpisodesUseCase getEpisodes;
   final ToggleFavoriteUseCase toggleFavorite;
-  
+
   EpisodesBloc({
     required this.getEpisodes,
     required this.toggleFavorite,
-  }) : super(EpisodesInitial()) {
+  }) : super(const EpisodesState()) {
     on<LoadEpisodes>(_onLoadEpisodes);
-    on<RefreshEpisodes>(_onRefreshEpisodes);
-    on<ToggleFavoriteInEpisodes>(_onToggleFavorite);
+    on<SearchEpisodes>(_onSearchEpisodes);
+    on<FilterBySeason>(_onFilterBySeason);
+    on<ToggleFavorite>(_onToggleFavorite);
   }
 
-  Future<void> _onLoadEpisodes(
-    LoadEpisodes event,
-    Emitter<EpisodesState> emit,
-  ) async {
+  Future<void> _onLoadEpisodes(LoadEpisodes event, Emitter<EpisodesState> emit) async {
     try {
-      if (state is EpisodesInitial) {
-        emit(EpisodesLoading());
-      }
-      
-      final episodes = await getEpisodes(page: event.page);
-      emit(EpisodesLoaded(episodes));
+      emit(state.copyWith(isLoading: true));
+      final episodes = await getEpisodes();
+      emit(state.copyWith(
+        episodes: episodes,
+        isLoading: false,
+        error: null,
+      ));
     } catch (e) {
-      emit(EpisodesError(e.toString()));
+      emit(state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
     }
   }
 
-  Future<void> _onRefreshEpisodes(
-    RefreshEpisodes event,
-    Emitter<EpisodesState> emit,
-  ) async {
-    try {
-      emit(EpisodesLoading());
-      final episodes = await getEpisodes(page: 1);
-      emit(EpisodesLoaded(episodes));
-    } catch (e) {
-      emit(EpisodesError(e.toString()));
-    }
+  void _onSearchEpisodes(SearchEpisodes event, Emitter<EpisodesState> emit) {
+    emit(state.copyWith(searchQuery: event.query));
   }
 
-  Future<void> _onToggleFavorite(
-    ToggleFavoriteInEpisodes event,
-    Emitter<EpisodesState> emit,
-  ) async {
+  void _onFilterBySeason(FilterBySeason event, Emitter<EpisodesState> emit) {
+    emit(state.copyWith(selectedSeason: event.season));
+  }
+
+  Future<void> _onToggleFavorite(ToggleFavorite event, Emitter<EpisodesState> emit) async {
     try {
       await toggleFavorite(event.episode);
-      if (state is EpisodesLoaded) {
-        final currentState = state as EpisodesLoaded;
-        final updatedEpisodes = currentState.episodes.map((episode) {
-          if (episode.id == event.episode.id) {
-            return Episode(
-              id: episode.id,
-              name: episode.name,
-              airDate: episode.airDate,
-              episode: episode.episode,
-              characters: episode.characters,
-              isFavorite: !episode.isFavorite,
-            );
-          }
-          return episode;
-        }).toList();
-        emit(EpisodesLoaded(updatedEpisodes));
-      }
+      
+      // Atualiza apenas o episódio específico na lista
+      final updatedEpisodes = state.episodes.map((episode) {
+        if (episode.id == event.episode.id) {
+          return episode.copyWith(isFavorite: !episode.isFavorite);
+        }
+        return episode;
+      }).toList();
+      
+      // Mantém os filtros existentes ao atualizar o estado
+      emit(state.copyWith(
+        episodes: updatedEpisodes,
+        searchQuery: state.searchQuery,
+        selectedSeason: state.selectedSeason,
+      ));
     } catch (e) {
-      emit(EpisodesError(e.toString()));
+      emit(state.copyWith(error: e.toString()));
     }
   }
-} 
+}

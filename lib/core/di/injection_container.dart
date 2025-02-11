@@ -38,7 +38,7 @@ Future<void> init() async {
 
   getIt.registerFactory(
     () => FavoritesBloc(
-      getFavoriteEpisodes: getIt(),
+      getFavorites: getIt(),
       toggleFavorite: getIt(),
     ),
   );
