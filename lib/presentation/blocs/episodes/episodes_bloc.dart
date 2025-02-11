@@ -23,17 +23,27 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
 
   Future<void> _onLoadEpisodes(LoadEpisodes event, Emitter<EpisodesState> emit) async {
     try {
-      emit(state.copyWith(isLoading: true));
+      emit(state.copyWith(
+        isLoading: true,
+        searchQuery: state.searchQuery,
+        selectedSeason: state.selectedSeason,
+      ));
+      
       final episodes = await getEpisodes();
+      
       emit(state.copyWith(
         episodes: episodes,
         isLoading: false,
         error: null,
+        searchQuery: state.searchQuery,
+        selectedSeason: state.selectedSeason,
       ));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
         error: e.toString(),
+        searchQuery: state.searchQuery,
+        selectedSeason: state.selectedSeason,
       ));
     }
   }
@@ -69,7 +79,11 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
         selectedSeason: state.selectedSeason,
       ));
     } catch (e) {
-      emit(state.copyWith(error: e.toString()));
+      emit(state.copyWith(
+        error: e.toString(),
+        searchQuery: state.searchQuery,
+        selectedSeason: state.selectedSeason,
+      ));
     }
   }
 }
