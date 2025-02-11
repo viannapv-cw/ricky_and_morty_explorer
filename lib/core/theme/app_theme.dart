@@ -3,9 +3,8 @@ import 'app_colors.dart';
 
 class AppTheme {
   static ThemeData get darkTheme {
-    return ThemeData(
+    return ThemeData.dark().copyWith(
       useMaterial3: true,
-      brightness: Brightness.dark,
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
@@ -81,13 +80,28 @@ class AppTheme {
           ),
         ),
       ),
+      chipTheme: ChipThemeData(
+        selectedColor: AppColors.portalGreen,
+        checkmarkColor: Colors.black,
+        backgroundColor: Colors.white,
+        labelStyle: const TextStyle(color: Colors.black),
+        pressElevation: 0,
+        showCheckmark: false,
+        padding: const EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        selectedShadowColor: Colors.transparent,
+        disabledColor: Colors.grey,
+        secondarySelectedColor: AppColors.portalGreen.withValues(alpha: .2),
+        secondaryLabelStyle: const TextStyle(color: Colors.black),
+      ),
     );
   }
 
   static ThemeData get lightTheme {
-    return ThemeData(
+    return ThemeData.light().copyWith(
       useMaterial3: true,
-      brightness: Brightness.light,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
@@ -155,6 +169,17 @@ class AppTheme {
             borderRadius: BorderRadius.circular(8),
           ),
         ),
+      ),
+      chipTheme: ChipThemeData(
+        selectedColor: AppColors.secondary,
+        checkmarkColor: Colors.white,
+        pressElevation: 0,
+        showCheckmark: false,
+        padding: const EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        secondarySelectedColor: AppColors.secondary.withValues(alpha: .2),
       ),
     );
   }
