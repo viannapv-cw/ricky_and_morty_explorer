@@ -39,18 +39,23 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
   }
 
   void _onSearchEpisodes(SearchEpisodes event, Emitter<EpisodesState> emit) {
-    emit(state.copyWith(searchQuery: event.query));
+    emit(state.copyWith(
+      searchQuery: event.query,
+      selectedSeason: state.selectedSeason,
+    ));
   }
 
   void _onFilterBySeason(FilterBySeason event, Emitter<EpisodesState> emit) {
-    emit(state.copyWith(selectedSeason: event.season));
+    emit(state.copyWith(
+      selectedSeason: event.season,
+      searchQuery: state.searchQuery,
+    ));
   }
 
   Future<void> _onToggleFavorite(ToggleFavorite event, Emitter<EpisodesState> emit) async {
     try {
       await toggleFavorite(event.episode);
       
-      // Atualiza apenas o episódio específico na lista
       final updatedEpisodes = state.episodes.map((episode) {
         if (episode.id == event.episode.id) {
           return episode.copyWith(isFavorite: !episode.isFavorite);
@@ -58,7 +63,6 @@ class EpisodesBloc extends Bloc<EpisodesEvent, EpisodesState> {
         return episode;
       }).toList();
       
-      // Mantém os filtros existentes ao atualizar o estado
       emit(state.copyWith(
         episodes: updatedEpisodes,
         searchQuery: state.searchQuery,

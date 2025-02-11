@@ -17,12 +17,19 @@ class EpisodesState extends Equatable {
 
   List<Episode> get filteredEpisodes {
     return episodes.where((episode) {
-      final matchesSearch = searchQuery.isEmpty || 
-        episode.name.toLowerCase().contains(searchQuery.toLowerCase());
-      
-      final matchesSeason = selectedSeason == null || 
-        episode.episode.startsWith(selectedSeason!);
-      
+      // Aplica o filtro de nome
+      bool matchesSearch = true;
+      if (searchQuery.isNotEmpty) {
+        matchesSearch = episode.name.toLowerCase().contains(searchQuery.toLowerCase());
+      }
+
+      // Aplica o filtro de temporada
+      bool matchesSeason = true;
+      if (selectedSeason != null) {
+        matchesSeason = episode.episode.startsWith(selectedSeason!);
+      }
+
+      // Retorna true apenas se ambos os filtros passarem
       return matchesSearch && matchesSeason;
     }).toList();
   }
@@ -37,7 +44,7 @@ class EpisodesState extends Equatable {
     return EpisodesState(
       episodes: episodes ?? this.episodes,
       searchQuery: searchQuery ?? this.searchQuery,
-      selectedSeason: selectedSeason,
+      selectedSeason: selectedSeason, // Permite null para limpar o filtro
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );
