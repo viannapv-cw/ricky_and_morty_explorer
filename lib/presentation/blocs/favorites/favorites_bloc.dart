@@ -42,14 +42,15 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     try {
       await toggleFavorite(event.episode);
       
-      // Recarrega os favoritos após toggle
-      final updatedFavorites = await getFavorites();
+      // Remove o episódio da lista de favoritos imediatamente
+      final updatedFavorites = state.favorites.where((episode) => 
+        episode.id != event.episode.id
+      ).toList();
       
       emit(state.copyWith(
         favorites: updatedFavorites,
       ));
     } catch (e) {
-      print('Error toggling favorite: $e'); // Debug log
       emit(state.copyWith(error: e.toString()));
     }
   }

@@ -1,113 +1,147 @@
-# rick_and_morty_explorer
+# Rick and Morty Explorer 🌀
 
-A new Flutter project.
+Um aplicativo Flutter que explora o universo de Rick and Morty, permitindo visualizar episódios, personagens e gerenciar favoritos.
 
-## Getting Started
+<details>
+<summary><h2>1. 🚀 Começando</h2></summary>
 
-# Flutter Challenge: Rick and Morty Explorer
+### 1.1 Pré-requisitos
 
-## Overview
-Develop a Flutter application that allows users to explore the Rick and Morty universe, focusing on episodes and their characters.
+Antes de começar, certifique-se de ter instalado:
+1. [Flutter](https://flutter.dev/docs/get-started/install) (versão mais recente)
+2. [Dart](https://dart.dev/get-dart)
+3. [Git](https://git-scm.com/)
+4. IDE ([VS Code](https://code.visualstudio.com/) ou [Android Studio](https://developer.android.com/studio))
 
-## Main Objectives
-- Create an intuitive and responsive interface
-- Implement development best practices
-- Demonstrate clean architecture knowledge
-- Provide a smooth user experience
+### 1.2 Instalação
 
-## Essential Features
+```bash
+# Clone o repositório
+git clone https://github.com/seu-usuario/rick_and_morty_explorer.git
 
-### Home Screen
-#### Episodes List
-- Infinite scroll for progressive loading
-- Search by episode name
-- Filter by season
-- Display episode code (e.g., S01E01)
-- Display air date
+# Entre no diretório
+cd rick_and_morty_explorer
 
-#### Episode Card
-- Episode name
-- Episode code
-- Air date
-- Favorite episode button
+# Instale as dependências
+flutter pub get
 
-#### Screen States
-- Loading
-- Empty State
-- Error State
-- Success State
+# Execute o app
+flutter run
+```
+</details>
 
-### Episode Details Page
-#### Episode Information
-- Complete episode data
-  - Name
-  - Air date
-  - Episode code
-  - Season number
-- Favorite episode option
+<details>
+<summary><h2>2. 📦 Dependências</h2></summary>
 
-#### Characters List
-- Characters list that appear in the episode
-  - Character photo
-  - Name
-  - Status indicator (alive/dead/unknown)
-  - Species
-  - Current location
+Adicione ao seu `pubspec.yaml`:
 
-#### Screen States
-- Loading
-- Empty State
-- Error State
-- Success State
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  dio: ^5.4.0
+  flutter_bloc: ^8.1.3
+  equatable: ^2.0.5
+  get_it: ^7.6.4
+  shared_preferences: ^2.2.2
+  cached_network_image: ^3.3.0
 
-### Favorites Episodes Page
-#### Favorites List
-- List of favorited episodes
-- Favorites management
-- Quick access to episode details
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+```
+</details>
 
-#### Screen States
-- Loading
-- Empty State
-- Error State
-- Success State
+<details>
+<summary><h2>3. ✨ Funcionalidades</h2></summary>
 
-## Technical Specifications
+### 3.1 📺 Lista de Episódios
+1. Lista completa de episódios
+2. Filtros por temporada
+3. Busca por nome
+4. Sistema de favoritos
 
-### State Management
-- We recommend Bloc/Cubit for state management
+### 3.2 🔍 Filtros Inteligentes
+1. Filtro por temporada
+2. Busca por nome
+3. Combinação de filtros
+4. Persistência durante navegação
 
-### Storage and API
-- Rick and Morty API integration
-- Local persistence for favorite episodes
-- Proper error handling
+### 3.3 ⭐ Sistema de Favoritos
+1. Marcar/Desmarcar favoritos
+2. Lista dedicada
+3. Persistência local
+4. Atualização em tempo real
 
-### Testing
-- Unit tests implementation
-- Significant code coverage
+### 3.4 🎨 Temas
+1. Modo claro e escuro
+2. Cores personalizadas
+3. Transições suaves
+4. Visual consistente
+</details>
 
-### Interface
-- Modern and intuitive design
-- Fluid user experience
-- Responsiveness
+<details>
+<summary><h2>4. 🏗️ Arquitetura</h2></summary>
 
-## Resources
-### Rick and Morty API
-- Base URL: [https://rickandmortyapi.com/api]
-- Episodes endpoint: `/episode`
-- Characters endpoint: `/character`
+O projeto segue Clean Architecture com a seguinte estrutura:
 
-## Evaluation Criteria
-- Code quality and organization
-- Features implementation
-- Error handling
-- Unit tests
-- UI/UX
-- Performance
-- Architecture and project structure
+```
+lib/
+├── core/
+│   ├── constants/   # Constantes da aplicação
+│   ├── di/          # Injeção de dependência
+│   ├── errors/      # Tratamento de erros
+│   ├── network/     # Configuração de rede
+│   └── theme/       # Configuração de temas
+├── data/
+│   ├── datasources/ # Fontes de dados
+│   ├── models/      # Modelos de dados
+│   └── repositories/# Implementação dos repositórios
+├── domain/
+│   ├── entities/    # Entidades de domínio
+│   ├── repositories/# Contratos dos repositórios
+│   └── usecases/    # Casos de uso
+└── presentation/
+    ├── blocs/       # Gerenciamento de estado
+    ├── pages/       # Telas
+    └── widgets/     # Componentes reutilizáveis
+```
 
-## Delivery
-- Source code in Git repository
-- README with execution instructions
-- Documentation of any additional features or improvements
+### 4.1 Padrões Utilizados
+1. Repository Pattern
+2. Dependency Injection
+3. BLoC Pattern
+</details>
 
+<details>
+<summary><h2>5. 📱 Screenshots</h2></summary>
+
+### 5.1 Tela Principal
+<div align="center">
+  <img src="assets/screenshots/home_light.png" width="250" alt="Tela Principal - Tema Claro"/>
+  <img src="assets/screenshots/home_dark.png" width="250" alt="Tela Principal - Tema Escuro"/>
+</div>
+
+### 5.2 Filtros e Busca
+<div align="center">
+  <img src="assets/screenshots/filters_light.png" width="250" alt="Filtros - Tema Claro"/>
+  <img src="assets/screenshots/filters_dark.png" width="250" alt="Filtros - Tema Escuro"/>
+</div>
+
+### 5.3 Detalhes do Episódio
+<div align="center">
+  <img src="assets/screenshots/details_light.png" width="250" alt="Detalhes - Tema Claro"/>
+  <img src="assets/screenshots/details_dark.png" width="250" alt="Detalhes - Tema Escuro"/>
+</div>
+
+### 5.4 Favoritos
+<div align="center">
+  <img src="assets/screenshots/favorites_light.png" width="250" alt="Favoritos - Tema Claro"/>
+  <img src="assets/screenshots/favorites_dark.png" width="250" alt="Favoritos - Tema Escuro"/>
+</div>
+
+</details>
+
+--
